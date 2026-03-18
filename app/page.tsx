@@ -1,0 +1,56 @@
+import type { Metadata } from "next";
+import Reviewer from "@/components/Reviewer";
+
+export const metadata: Metadata = {
+  title: "CodeReview·AI – Instant AI code reviews",
+  description:
+    "Paste your code and get an instant AI-powered review: bugs, security issues, performance tips, and style suggestions. Free to try. Bring your own API key.",
+};
+
+export default function Home() {
+  return (
+    <main className="min-h-screen bg-gray-950 text-gray-100">
+      <header className="border-b border-gray-800 py-4 px-4 sm:px-6">
+        <div className="max-w-4xl mx-auto flex items-center justify-between">
+          <span className="text-lg font-bold text-white">
+            CodeReview<span className="text-violet-400">·AI</span>
+          </span>
+          <span className="text-sm text-gray-500">3 free · BYOK unlimited</span>
+        </div>
+      </header>
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4 tracking-tight">
+            Code reviewed in{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-purple-400">
+              seconds
+            </span>
+          </h1>
+          <p className="text-gray-400 text-lg max-w-xl mx-auto">
+            Paste any code snippet. AI catches bugs, security holes, and performance
+            issues — with fix suggestions. No account needed.
+          </p>
+        </div>
+
+        <Reviewer />
+      </div>
+
+      <footer className="border-t border-gray-800 py-8 mt-16 text-center text-xs text-gray-600">
+        <p>
+          Powered by{" "}
+          <a
+            href="https://anthropic.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-violet-400 hover:text-violet-300 transition-colors"
+          >
+            Claude AI
+          </a>
+          {" · "}
+          Your code is never stored
+        </p>
+      </footer>
+    </main>
+  );
+}
