@@ -73,6 +73,8 @@ export default function RootLayout({
         />
         {children}
         <Analytics />
+        {/* LemonSqueezy overlay checkout */}
+        <script src="https://app.lemonsqueezy.com/js/lemon.js" defer></script>
       </body>
     </html>
   );

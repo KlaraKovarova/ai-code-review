@@ -15,7 +15,7 @@ export default function Home() {
           <span className="text-lg font-bold text-white">
             CodeReview<span className="text-violet-400">·AI</span>
           </span>
-          <span className="text-sm text-gray-500">3 free · BYOK unlimited</span>
+          <span className="text-sm text-gray-500">5/day free · $5/mo unlimited</span>
         </div>
       </header>
 

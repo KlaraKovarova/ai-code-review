@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import UpgradeModal from "./UpgradeModal";
 import { DEMO_CODE, DEMO_LANGUAGE, DEMO_REVIEW } from "@/lib/demo";
 
-const STORAGE_KEY = "code_review_usage";
-const FREE_LIMIT = 3;
+const DAILY_KEY = "code_review_daily";
+const FREE_LIMIT = 5;
 
 const LANGUAGES = [
   "Auto-detect",
@@ -35,13 +36,20 @@ const FOCUS_OPTIONS = [
 
 function getUsage(): number {
   if (typeof window === "undefined") return 0;
-  return parseInt(localStorage.getItem(STORAGE_KEY) ?? "0", 10);
+  try {
+    const today = new Date().toISOString().split("T")[0];
+    const stored = JSON.parse(localStorage.getItem(DAILY_KEY) ?? "null") as { count: number; date: string } | null;
+    return stored?.date === today ? stored.count : 0;
+  } catch {
+    return 0;
+  }
 }
 
 function incrementUsage(): number {
-  const next = getUsage() + 1;
-  localStorage.setItem(STORAGE_KEY, String(next));
-  return next;
+  const today = new Date().toISOString().split("T")[0];
+  const count = getUsage() + 1;
+  localStorage.setItem(DAILY_KEY, JSON.stringify({ count, date: today }));
+  return count;
 }
 
 function copyText(text: string) {
@@ -54,6 +62,7 @@ export default function Reviewer() {
   const [focus, setFocus] = useState<string[]>(["bugs", "security", "performance", "style"]);
   const [apiKey, setApiKey] = useState("");
   const [showByok, setShowByok] = useState(false);
+  const [showUpgrade, setShowUpgrade] = useState(false);
   const [review, setReview] = useState("");
   const [isDemo, setIsDemo] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -73,10 +82,7 @@ export default function Reviewer() {
 
       const currentUsage = getUsage();
       if (currentUsage >= FREE_LIMIT && !apiKey.trim()) {
-        setError(
-          "Free limit reached. Add your Anthropic API key below to continue — it's free to use your own key."
-        );
-        setShowByok(true);
+        setShowUpgrade(true);
         return;
       }
 
@@ -136,6 +142,8 @@ export default function Reviewer() {
 
   return (
     <>
+      {showUpgrade && <UpgradeModal onClose={() => setShowUpgrade(false)} />}
+
       {/* Before/after demo showcase */}
       <div className="mb-12">
         <div className="text-center mb-4">
@@ -249,15 +257,15 @@ export default function Reviewer() {
           <div className="flex items-center justify-between gap-4">
             <p className="text-xs text-gray-600">
               {remaining > 0 ? (
-                `${remaining} free review${remaining !== 1 ? "s" : ""} remaining`
+                `${remaining} free review${remaining !== 1 ? "s" : ""} remaining today`
               ) : (
                 <>
-                  Free limit reached —{" "}
+                  Daily limit reached —{" "}
                   <button
-                    onClick={() => setShowByok(true)}
+                    onClick={() => setShowUpgrade(true)}
                     className="text-violet-400 hover:text-violet-300 underline underline-offset-2"
                   >
-                    use your own API key
+                    upgrade for $5/mo
                   </button>
                 </>
               )}
@@ -301,7 +309,7 @@ export default function Reviewer() {
                 />
                 <p className="text-xs text-gray-600 leading-relaxed">
                   Your key is used only for this request — never logged, stored, or shared. Using your
-                  own key bypasses the free-review limit.
+                  own key bypasses the daily limit.
                 </p>
               </div>
             )}
@@ -342,6 +350,47 @@ export default function Reviewer() {
             />
           </div>
         )}
+
+        {/* Cross-promote other tools */}
+        <div className="border border-gray-800 rounded-2xl p-6 bg-gray-900/50">
+          <p className="text-xs text-gray-500 mb-3 font-medium uppercase tracking-wider">
+            More AI developer tools
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <a
+              href="https://readme-gen.vercel.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-indigo-400 hover:text-indigo-300 bg-indigo-950/50 border border-indigo-800/50 px-3 py-1.5 rounded-lg transition-colors"
+            >
+              ReadmeGen — AI README generator
+            </a>
+            <a
+              href="https://testgen-ai.vercel.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-emerald-400 hover:text-emerald-300 bg-emerald-950/50 border border-emerald-800/50 px-3 py-1.5 rounded-lg transition-colors"
+            >
+              TestGen·AI — unit test generator
+            </a>
+            <a
+              href="https://commitcraft-ai.vercel.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-amber-400 hover:text-amber-300 bg-amber-950/50 border border-amber-800/50 px-3 py-1.5 rounded-lg transition-colors"
+            >
+              CommitCraft·AI — commit message generator
+            </a>
+            <a
+              href="https://envgen-ai.vercel.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-cyan-400 hover:text-cyan-300 bg-cyan-950/50 border border-cyan-800/50 px-3 py-1.5 rounded-lg transition-colors"
+            >
+              EnvGen·AI — .env file generator
+            </a>
+          </div>
+        </div>
       </div>
     </>
   );
