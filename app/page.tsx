@@ -50,6 +50,16 @@ export default function Home() {
           {" · "}
           Your code is never stored
         </p>
+        <div className="mt-3">
+          <a
+            href="https://buymeacoffee.com/aiworks"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-yellow-500 text-gray-900 text-xs font-medium hover:bg-yellow-400 transition-colors"
+          >
+            ☕ Support this project
+          </a>
+        </div>
       </footer>
     </main>
   );
